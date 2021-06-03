@@ -33,7 +33,12 @@ app.listen(3000, () => console.log("Server ready"))
 
 app.get("/", (req, res) => {
   if (req.session.userid) {
-    res.render("dashboard")
+    client.hkeys("users", (err, users) => {
+      console.log(users)
+      res.render("dashboard", {
+        users,
+      })
+    })
   } else {
     res.render("login")
   }
@@ -74,7 +79,11 @@ app.post("/", (req, res) => {
   const saveSessionAndRenderDashboard = (userid) => {
     req.session.userid = userid
     req.session.save()
-    res.render("dashboard")
+    client.hkeys("users", (err, users) => {
+      res.render("dashboard", {
+        users,
+      })
+    })
   }
 
   const { username, password } = req.body
